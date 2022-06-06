@@ -1,1 +1,9 @@
-$bodyBg: linear-gradient(90deg, #FFFF00 6%, #FFA500 25%, #F14444 45%, #D53567 55%, #9A109A 94%);
+$green: #006d77;
+$lightGreen: #83c5be;
+$white: #edf6f9;
+$bodyBg: linear-gradient(90deg, $green, $lightGreen, $white);
+
+
+
+
+$shadow: 1px 5px 18px 2px rgba(0, 0, 0, 0.55);
