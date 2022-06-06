@@ -1,9 +1,11 @@
 export default class Uploader {
     #openBtn;
     #input;
+    #configs;
 
-    constructor(selector) {
-        this.#input = document.getElementById(selector);
+    constructor(selector, configs = {}) {
+        this.#input = document.querySelector(selector);
+        this.#configs = configs;
     }
 
     btnCreater(selector) {
@@ -16,9 +18,43 @@ export default class Uploader {
         this.#input.after(this.#openBtn);
 
         this.#inputClicker();
+        this.#inputConfig();
+        this.PreviewPrinter()
+    }
+
+    PreviewPrinter() {
+        const changeHandler = e => {
+            const files = Array.from(e.target.files);
+
+            files.forEach(file => {
+                let reader = new FileReader();
+
+                reader.readAsDataURL(file);
+                
+                reader.onload = e => {
+                    this.#input.insertAdjacentHTML("beforebegin", `<img src=${e.target.result} />`);
+                }
+            });
+        }
+
+        this.#input.addEventListener("change", changeHandler)
+    }
+
+    #inputConfig() {
+        if (this.#configs.multiple) {
+            this.#input.setAttribute("multiple", true);
+        }
+
+        if (this.#configs.accept && Array.isArray(this.#configs.accept)) {
+            const accept = this.#configs.accept.join(", ");
+
+            this.#input.setAttribute("accept", accept)
+        }
     }
 
     #inputClicker() {
-        this.#openBtn.addEventListener("click", () => this.#input.click());
+        const clickHandler = () => this.#input.click();
+
+        this.#openBtn.addEventListener("click", clickHandler);
     }
 }

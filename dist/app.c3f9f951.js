@@ -153,13 +153,21 @@ var _openBtn = /*#__PURE__*/new WeakMap();
 
 var _input = /*#__PURE__*/new WeakMap();
 
+var _configs = /*#__PURE__*/new WeakMap();
+
+var _inputConfig = /*#__PURE__*/new WeakSet();
+
 var _inputClicker = /*#__PURE__*/new WeakSet();
 
 var Uploader = /*#__PURE__*/function () {
   function Uploader(selector) {
+    var configs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, Uploader);
 
     _classPrivateMethodInitSpec(this, _inputClicker);
+
+    _classPrivateMethodInitSpec(this, _inputConfig);
 
     _classPrivateFieldInitSpec(this, _openBtn, {
       writable: true,
@@ -171,7 +179,14 @@ var Uploader = /*#__PURE__*/function () {
       value: void 0
     });
 
-    _classPrivateFieldSet(this, _input, document.getElementById(selector));
+    _classPrivateFieldInitSpec(this, _configs, {
+      writable: true,
+      value: void 0
+    });
+
+    _classPrivateFieldSet(this, _input, document.querySelector(selector));
+
+    _classPrivateFieldSet(this, _configs, configs);
   }
 
   _createClass(Uploader, [{
@@ -187,6 +202,29 @@ var Uploader = /*#__PURE__*/function () {
       _classPrivateFieldGet(this, _input).after(_classPrivateFieldGet(this, _openBtn));
 
       _classPrivateMethodGet(this, _inputClicker, _inputClicker2).call(this);
+
+      _classPrivateMethodGet(this, _inputConfig, _inputConfig2).call(this);
+
+      this.PreviewPrinter();
+    }
+  }, {
+    key: "PreviewPrinter",
+    value: function PreviewPrinter() {
+      var _this = this;
+
+      var changeHandler = function changeHandler(e) {
+        var files = Array.from(e.target.files);
+        files.forEach(function (file) {
+          var reader = new FileReader();
+          reader.readAsDataURL(file);
+
+          reader.onload = function (e) {
+            _classPrivateFieldGet(_this, _input).insertAdjacentHTML("beforebegin", "<img src=".concat(e.target.result, " />"));
+          };
+        });
+      };
+
+      _classPrivateFieldGet(this, _input).addEventListener("change", changeHandler);
     }
   }]);
 
@@ -195,12 +233,26 @@ var Uploader = /*#__PURE__*/function () {
 
 exports.default = Uploader;
 
-function _inputClicker2() {
-  var _this = this;
+function _inputConfig2() {
+  if (_classPrivateFieldGet(this, _configs).multiple) {
+    _classPrivateFieldGet(this, _input).setAttribute("multiple", true);
+  }
 
-  _classPrivateFieldGet(this, _openBtn).addEventListener("click", function () {
-    return _classPrivateFieldGet(_this, _input).click();
-  });
+  if (_classPrivateFieldGet(this, _configs).accept && Array.isArray(_classPrivateFieldGet(this, _configs).accept)) {
+    var accept = _classPrivateFieldGet(this, _configs).accept.join(", ");
+
+    _classPrivateFieldGet(this, _input).setAttribute("accept", accept);
+  }
+}
+
+function _inputClicker2() {
+  var _this2 = this;
+
+  var clickHandler = function clickHandler() {
+    return _classPrivateFieldGet(_this2, _input).click();
+  };
+
+  _classPrivateFieldGet(this, _openBtn).addEventListener("click", clickHandler);
 }
 },{}],"js/app.js":[function(require,module,exports) {
 "use strict";
@@ -209,7 +261,10 @@ var _upload = _interopRequireDefault(require("../js/upload.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var uploader = new _upload.default("input");
+var uploader = new _upload.default("#input", {
+  multiple: true,
+  accept: [".jpg", ".HEIC", ".png", ".pdf"]
+});
 uploader.btnCreater();
 },{"../js/upload.js":"js/upload.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
