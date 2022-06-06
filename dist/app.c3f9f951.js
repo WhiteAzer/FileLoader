@@ -118,13 +118,99 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"js/upload.js":[function(require,module,exports) {
-console.log("upload.js");
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classPrivateMethodInitSpec(obj, privateSet) { _checkPrivateRedeclaration(obj, privateSet); privateSet.add(obj); }
+
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+var _openBtn = /*#__PURE__*/new WeakMap();
+
+var _input = /*#__PURE__*/new WeakMap();
+
+var _inputClicker = /*#__PURE__*/new WeakSet();
+
+var Uploader = /*#__PURE__*/function () {
+  function Uploader(selector) {
+    _classCallCheck(this, Uploader);
+
+    _classPrivateMethodInitSpec(this, _inputClicker);
+
+    _classPrivateFieldInitSpec(this, _openBtn, {
+      writable: true,
+      value: void 0
+    });
+
+    _classPrivateFieldInitSpec(this, _input, {
+      writable: true,
+      value: void 0
+    });
+
+    _classPrivateFieldSet(this, _input, document.getElementById(selector));
+  }
+
+  _createClass(Uploader, [{
+    key: "btnCreater",
+    value: function btnCreater(selector) {
+      _classPrivateFieldSet(this, _openBtn, document.createElement("button"));
+
+      _classPrivateFieldGet(this, _openBtn).classList.add("uploader-btn__open", "uploader-btn");
+
+      _classPrivateFieldGet(this, _openBtn).textContent = "Открыть";
+      _classPrivateFieldGet(this, _input).style.display = "none";
+
+      _classPrivateFieldGet(this, _input).after(_classPrivateFieldGet(this, _openBtn));
+
+      _classPrivateMethodGet(this, _inputClicker, _inputClicker2).call(this);
+    }
+  }]);
+
+  return Uploader;
+}();
+
+exports.default = Uploader;
+
+function _inputClicker2() {
+  var _this = this;
+
+  _classPrivateFieldGet(this, _openBtn).addEventListener("click", function () {
+    return _classPrivateFieldGet(_this, _input).click();
+  });
+}
 },{}],"js/app.js":[function(require,module,exports) {
 "use strict";
 
-require("../js/upload.js");
+var _upload = _interopRequireDefault(require("../js/upload.js"));
 
-console.log("Hi there!");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var uploader = new _upload.default("input");
+uploader.btnCreater();
 },{"../js/upload.js":"js/upload.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -153,7 +239,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49165" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49169" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

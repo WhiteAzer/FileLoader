@@ -1,4 +1,5 @@
-import "../js/upload.js"
+import Uploader from "../js/upload.js";
 
+const uploader = new Uploader("input");
 
-console.log("Hi there!")
+uploader.btnCreater();
