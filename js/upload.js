@@ -28,17 +28,29 @@ export default class Uploader {
             files.forEach(file => {
                 let reader = new FileReader();
 
-                console.log(file.type)
-
                 reader.readAsDataURL(file);
-                const fileImgs = {
-                    "application/pdf": "1.jpg",
-                };
 
                 reader.onload = e => {
-                    let fileURL =  /*navigator.userAgent.includes('Safari') ? e.target.result :*/ fileImgs[file.type];
+                    const imgsGroup = document.querySelector(".uploader-imgs");
 
-                    document.querySelector(".uploader-imgs").insertAdjacentHTML("afterbegin", `<img src=${fileURL} class="uploader-imgs__item"/>`);
+                    const imgContainer = document.createElement("div");
+                    imgContainer.classList.add("uploader-imgs__item-container");
+
+                    let isSafari =  isSafari =  navigator.userAgent.includes('Safari') ? true : false;
+
+                    if (file.type.includes("image") || (isSafari && file.type.includes("pdf"))) {
+                        let img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("uploader-imgs__item");
+                        imgContainer.append(img);
+                        imgsGroup.append(imgContainer);
+                    } else {
+                        let div = document.createElement("div");
+                        div.textContent = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
+                        div.classList.add("uploader-imgs__item", "uploader-imgs__file");
+                        imgContainer.append(div);
+                        imgsGroup.append(imgContainer);
+                    }
                 }
             });
         }

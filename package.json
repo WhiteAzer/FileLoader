@@ -12,14 +12,10 @@
   "license": "ISC",
   "devDependencies": {
     "parcel-bundler": "^1.12.5",
-    "parcel-plugin-static-files-copy": "^2.6.0",
     "sass": "^1.52.2"
   },
   "dependencies": {
+    "imgs": "^0.0.1",
     "upload.js": "^0.0.11"
-  },
-  "staticFiles": {
-    "staticPath": "public",
-    "watcherGlob": "**"
   }
 }
