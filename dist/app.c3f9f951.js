@@ -190,8 +190,8 @@ var Uploader = /*#__PURE__*/function () {
   }
 
   _createClass(Uploader, [{
-    key: "btnCreater",
-    value: function btnCreater(selector) {
+    key: "BtnCreater",
+    value: function BtnCreater(selector) {
       _classPrivateFieldSet(this, _openBtn, document.createElement("button"));
 
       _classPrivateFieldGet(this, _openBtn).classList.add("uploader-btn__open", "uploader-btn");
@@ -204,22 +204,25 @@ var Uploader = /*#__PURE__*/function () {
       _classPrivateMethodGet(this, _inputClicker, _inputClicker2).call(this);
 
       _classPrivateMethodGet(this, _inputConfig, _inputConfig2).call(this);
-
-      this.PreviewPrinter();
     }
   }, {
     key: "PreviewPrinter",
     value: function PreviewPrinter() {
-      var _this = this;
-
       var changeHandler = function changeHandler(e) {
         var files = Array.from(e.target.files);
         files.forEach(function (file) {
           var reader = new FileReader();
+          console.log(file.type);
           reader.readAsDataURL(file);
+          var fileImgs = {
+            "application/pdf": "1.jpg"
+          };
 
           reader.onload = function (e) {
-            _classPrivateFieldGet(_this, _input).insertAdjacentHTML("beforebegin", "<img src=".concat(e.target.result, " />"));
+            var fileURL =
+            /*navigator.userAgent.includes('Safari') ? e.target.result :*/
+            fileImgs[file.type];
+            document.querySelector(".uploader-imgs").insertAdjacentHTML("afterbegin", "<img src=".concat(fileURL, " class=\"uploader-imgs__item\"/>"));
           };
         });
       };
@@ -246,10 +249,10 @@ function _inputConfig2() {
 }
 
 function _inputClicker2() {
-  var _this2 = this;
+  var _this = this;
 
   var clickHandler = function clickHandler() {
-    return _classPrivateFieldGet(_this2, _input).click();
+    return _classPrivateFieldGet(_this, _input).click();
   };
 
   _classPrivateFieldGet(this, _openBtn).addEventListener("click", clickHandler);
@@ -263,9 +266,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var uploader = new _upload.default("#input", {
   multiple: true,
-  accept: [".jpg", ".HEIC", ".png", ".pdf"]
+  accept: [".jpg", ".docx", ".png", ".pdf"]
 });
-uploader.btnCreater();
+uploader.BtnCreater();
+uploader.PreviewPrinter();
 },{"../js/upload.js":"js/upload.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -294,7 +298,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49169" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51049" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

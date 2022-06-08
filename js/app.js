@@ -2,7 +2,8 @@ import Uploader from "../js/upload.js";
 
 const uploader = new Uploader("#input", {
     multiple: true,
-    accept: [".jpg", ".HEIC", ".png", ".pdf"]
+    accept: [".jpg", ".docx", ".png", ".pdf"]
 });
 
-uploader.btnCreater();
+uploader.BtnCreater();
+uploader.PreviewPrinter();

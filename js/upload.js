@@ -8,7 +8,7 @@ export default class Uploader {
         this.#configs = configs;
     }
 
-    btnCreater(selector) {
+    BtnCreater(selector) {
         this.#openBtn = document.createElement("button");
 
         this.#openBtn.classList.add("uploader-btn__open", "uploader-btn");
@@ -19,7 +19,6 @@ export default class Uploader {
 
         this.#inputClicker();
         this.#inputConfig();
-        this.PreviewPrinter()
     }
 
     PreviewPrinter() {
@@ -29,10 +28,17 @@ export default class Uploader {
             files.forEach(file => {
                 let reader = new FileReader();
 
+                console.log(file.type)
+
                 reader.readAsDataURL(file);
-                
+                const fileImgs = {
+                    "application/pdf": "1.jpg",
+                };
+
                 reader.onload = e => {
-                    this.#input.insertAdjacentHTML("beforebegin", `<img src=${e.target.result} />`);
+                    let fileURL =  /*navigator.userAgent.includes('Safari') ? e.target.result :*/ fileImgs[file.type];
+
+                    document.querySelector(".uploader-imgs").insertAdjacentHTML("afterbegin", `<img src=${fileURL} class="uploader-imgs__item"/>`);
                 }
             });
         }

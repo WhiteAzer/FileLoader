@@ -357,14 +357,27 @@ body {
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(8px);
   box-shadow: 1px 5px 18px 2px rgba(0, 0, 0, 0.55);
-  height: 300px;
   padding: 40px 50px;
 }
 .uploader-title {
   font-size: 38px;
   margin-bottom: 35px;
 }
+.uploader-imgs {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+.uploader-imgs__item {
+  max-width: 100px;
+  background-color: #FFFFFF;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
 .uploader-btn {
+  display: block;
   padding: 8px 15px;
   border-radius: 20px;
   transition: all 0.3s;
