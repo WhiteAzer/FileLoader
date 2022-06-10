@@ -151,6 +151,8 @@ function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.
 
 var _openBtn = /*#__PURE__*/new WeakMap();
 
+var _removeBtn = /*#__PURE__*/new WeakMap();
+
 var _input = /*#__PURE__*/new WeakMap();
 
 var _configs = /*#__PURE__*/new WeakMap();
@@ -159,17 +161,30 @@ var _inputConfig = /*#__PURE__*/new WeakSet();
 
 var _inputClicker = /*#__PURE__*/new WeakSet();
 
+var _removeBtnCreater = /*#__PURE__*/new WeakSet();
+
+var _removeClicker = /*#__PURE__*/new WeakSet();
+
 var Uploader = /*#__PURE__*/function () {
   function Uploader(selector) {
     var configs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, Uploader);
 
+    _classPrivateMethodInitSpec(this, _removeClicker);
+
+    _classPrivateMethodInitSpec(this, _removeBtnCreater);
+
     _classPrivateMethodInitSpec(this, _inputClicker);
 
     _classPrivateMethodInitSpec(this, _inputConfig);
 
     _classPrivateFieldInitSpec(this, _openBtn, {
+      writable: true,
+      value: void 0
+    });
+
+    _classPrivateFieldInitSpec(this, _removeBtn, {
       writable: true,
       value: void 0
     });
@@ -199,7 +214,9 @@ var Uploader = /*#__PURE__*/function () {
       _classPrivateFieldGet(this, _openBtn).textContent = "Открыть";
       _classPrivateFieldGet(this, _input).style.display = "none";
 
-      _classPrivateFieldGet(this, _input).after(_classPrivateFieldGet(this, _openBtn));
+      _classPrivateFieldGet(this, _input).insertAdjacentHTML("afterend", "\n            <div class=\"uploader-btn__group\">\n            </div>\n        ");
+
+      _classPrivateFieldGet(this, _input).nextElementSibling.append(_classPrivateFieldGet(this, _openBtn));
 
       _classPrivateMethodGet(this, _inputClicker, _inputClicker2).call(this);
 
@@ -208,33 +225,31 @@ var Uploader = /*#__PURE__*/function () {
   }, {
     key: "PreviewPrinter",
     value: function PreviewPrinter() {
+      var _this = this;
+
+      var imgsGroup = document.createElement("div");
+      imgsGroup.classList.add("uploader-imgs");
+      document.querySelector(".uploader-title").after(imgsGroup);
+
       var changeHandler = function changeHandler(e) {
         var files = Array.from(e.target.files);
         files.forEach(function (file) {
           var reader = new FileReader();
-          reader.readAsDataURL(file);
 
           reader.onload = function (e) {
-            var imgsGroup = document.querySelector(".uploader-imgs");
-            var imgContainer = document.createElement("div");
-            imgContainer.classList.add("uploader-imgs__item-container");
             var isSafari = isSafari = navigator.userAgent.includes('Safari') ? true : false;
 
             if (file.type.includes("image") || isSafari && file.type.includes("pdf")) {
-              var img = document.createElement("img");
-              img.src = e.target.result;
-              img.classList.add("uploader-imgs__item");
-              imgContainer.append(img);
-              imgsGroup.append(imgContainer);
+              imgsGroup.insertAdjacentHTML('afterbegin', "\n                            <div class=\"uploader-imgs__item-container\">\n                                <img src=\"".concat(e.target.result, "\" alt=\"").concat(file.name, "\" class=\"uploader-imgs__item\" />\n                            </div>\n                        "));
             } else {
-              var div = document.createElement("div");
-              div.textContent = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
-              div.classList.add("uploader-imgs__item", "uploader-imgs__file");
-              imgContainer.append(div);
-              imgsGroup.append(imgContainer);
+              var text = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
+              imgsGroup.insertAdjacentHTML('afterbegin', "\n                            <div class=\"uploader-imgs__item-container\">\n                                <div class=\"uploader-imgs__item uploader-imgs__file\">\n                                    <p class=\"uploader-imgs__item-text\">".concat(text, "</p>\n                                </div>\n                            </div>\n                        "));
             }
           };
+
+          reader.readAsDataURL(file);
         });
+        if (!_classPrivateFieldGet(_this, _removeBtn)) _classPrivateMethodGet(_this, _removeBtnCreater, _removeBtnCreater2).call(_this);
       };
 
       _classPrivateFieldGet(this, _input).addEventListener("change", changeHandler);
@@ -259,13 +274,64 @@ function _inputConfig2() {
 }
 
 function _inputClicker2() {
-  var _this = this;
+  var _this2 = this;
 
   var clickHandler = function clickHandler() {
-    return _classPrivateFieldGet(_this, _input).click();
+    return _classPrivateFieldGet(_this2, _input).click();
   };
 
   _classPrivateFieldGet(this, _openBtn).addEventListener("click", clickHandler);
+}
+
+function _removeBtnCreater2() {
+  _classPrivateFieldSet(this, _removeBtn, document.createElement("button"));
+
+  _classPrivateFieldGet(this, _removeBtn).classList.add("uploader-btn__remove", "uploader-btn");
+
+  _classPrivateFieldGet(this, _removeBtn).textContent = "Удалить";
+
+  _classPrivateFieldGet(this, _removeBtn).setAttribute("status", "inactive");
+
+  _classPrivateFieldGet(this, _openBtn).after(_classPrivateFieldGet(this, _removeBtn));
+
+  _classPrivateMethodGet(this, _removeClicker, _removeClicker2).call(this);
+}
+
+function _removeClicker2() {
+  var _this3 = this;
+
+  var clickHandler = function clickHandler() {
+    var items = document.querySelectorAll(".uploader-imgs__item-container");
+    items.forEach(function (item) {
+      item.classList.toggle("cursor");
+    });
+
+    if (_classPrivateFieldGet(_this3, _removeBtn).getAttribute("status") === "inactive") {
+      items.forEach(function (item) {
+        item.addEventListener("click", removeAnimation);
+      });
+      _classPrivateFieldGet(_this3, _removeBtn).textContent = "Готово";
+
+      _classPrivateFieldGet(_this3, _removeBtn).setAttribute("status", "active");
+    } else {
+      items.forEach(function (item) {
+        item.removeEventListener("click", removeAnimation);
+
+        if (item.classList.contains("selected")) {
+          item.remove();
+        }
+      });
+      _classPrivateFieldGet(_this3, _removeBtn).textContent = "Удалить";
+
+      _classPrivateFieldGet(_this3, _removeBtn).setAttribute("status", "inactive");
+    }
+  };
+
+  _classPrivateFieldGet(this, _removeBtn).addEventListener("click", clickHandler);
+
+  function removeAnimation() {
+    this.classList.toggle("selected");
+  }
 }
 },{}],"js/app.js":[function(require,module,exports) {
 "use strict";
@@ -308,7 +374,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49411" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49226" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

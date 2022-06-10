@@ -372,7 +372,8 @@ body {
   flex-wrap: wrap;
 }
 .uploader-imgs__item {
-  width: 245px;
+  width: 100%;
+  height: auto;
   background-color: #edf6f9;
 }
 .uploader-imgs__file {
@@ -387,23 +388,50 @@ body {
   color: #006d77;
 }
 .uploader-imgs__item-container {
-  width: 240px;
+  width: 249px;
   height: 160px;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 20px;
   margin-bottom: 20px;
   box-shadow: 1px 5px 18px 2px rgba(0, 0, 0, 0.55);
   border-radius: 10px;
   border: 2px solid #006d77;
+  transition: all 0.3s;
+}
+.uploader-imgs__item-container:not(:nth-child(3n)) {
+  margin-right: 20px;
+}
+.uploader-imgs .cursor {
+  cursor: pointer;
+}
+.uploader-imgs .selected {
+  animation: 0.8s ease-in-out 0s normal none infinite running trambling-animation;
+  opacity: 0.2;
+  border-color: #ae2525;
+}
+@keyframes trambling-animation {
+  0%, 50%, 100% {
+    transform: rotate(0deg);
+  }
+  10%, 30% {
+    transform: rotate(-3deg);
+  }
+  20%, 40% {
+    transform: rotate(3deg);
+  }
 }
 .uploader-btn {
   display: block;
   padding: 8px 15px;
   border-radius: 20px;
   transition: all 0.3s;
+  cursor: pointer;
+}
+.uploader-btn__group {
+  display: flex;
+  justify-content: space-between;
 }
 .uploader-btn__open {
   border: 2px solid #006d77;
@@ -414,6 +442,11 @@ body {
   border: 2px solid #edf6f9;
   background-color: #006d77;
   color: #edf6f9;
+}
+.uploader-btn__remove {
+  border: 2px solid #ae2525;
+  background-color: #edf6f9;
+  color: #ae2525;
 }
 .uploader-btn:hover {
   opacity: 0.8;

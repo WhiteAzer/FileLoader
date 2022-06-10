@@ -1,5 +1,6 @@
 export default class Uploader {
     #openBtn;
+    #removeBtn;
     #input;
     #configs;
 
@@ -15,44 +16,52 @@ export default class Uploader {
         this.#openBtn.textContent = "Открыть";
 
         this.#input.style.display = "none";
-        this.#input.after(this.#openBtn);
+        this.#input.insertAdjacentHTML("afterend", `
+            <div class="uploader-btn__group">
+            </div>
+        `);
+        this.#input.nextElementSibling.append(this.#openBtn);
 
         this.#inputClicker();
         this.#inputConfig();
     }
 
     PreviewPrinter() {
+        const imgsGroup = document.createElement("div");
+        imgsGroup.classList.add("uploader-imgs");
+        document.querySelector(".uploader-title").after(imgsGroup);
+
         const changeHandler = e => {
             const files = Array.from(e.target.files);
 
             files.forEach(file => {
                 let reader = new FileReader();
 
-                reader.readAsDataURL(file);
-
                 reader.onload = e => {
-                    const imgsGroup = document.querySelector(".uploader-imgs");
-
-                    const imgContainer = document.createElement("div");
-                    imgContainer.classList.add("uploader-imgs__item-container");
-
                     let isSafari =  isSafari =  navigator.userAgent.includes('Safari') ? true : false;
 
                     if (file.type.includes("image") || (isSafari && file.type.includes("pdf"))) {
-                        let img = document.createElement("img");
-                        img.src = e.target.result;
-                        img.classList.add("uploader-imgs__item");
-                        imgContainer.append(img);
-                        imgsGroup.append(imgContainer);
+                        imgsGroup.insertAdjacentHTML('afterbegin', `
+                            <div class="uploader-imgs__item-container">
+                                <img src="${e.target.result}" alt="${file.name}" class="uploader-imgs__item" />
+                            </div>
+                        `);
                     } else {
-                        let div = document.createElement("div");
-                        div.textContent = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
-                        div.classList.add("uploader-imgs__item", "uploader-imgs__file");
-                        imgContainer.append(div);
-                        imgsGroup.append(imgContainer);
+                        let text = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
+
+                        imgsGroup.insertAdjacentHTML('afterbegin', `
+                            <div class="uploader-imgs__item-container">
+                                <div class="uploader-imgs__item uploader-imgs__file">
+                                    <p class="uploader-imgs__item-text">${text}</p>
+                                </div>
+                            </div>
+                        `);
                     }
                 }
+
+                reader.readAsDataURL(file);
             });
+            if (!this.#removeBtn) this.#removeBtnCreater();
         }
 
         this.#input.addEventListener("change", changeHandler)
@@ -74,5 +83,52 @@ export default class Uploader {
         const clickHandler = () => this.#input.click();
 
         this.#openBtn.addEventListener("click", clickHandler);
+    }
+    
+    #removeBtnCreater() {
+        this.#removeBtn = document.createElement("button");
+        this.#removeBtn.classList.add("uploader-btn__remove", "uploader-btn");
+        this.#removeBtn.textContent = "Удалить";
+        this.#removeBtn.setAttribute("status", "inactive");
+
+        this.#openBtn.after(this.#removeBtn)
+
+        this.#removeClicker();
+    }
+
+    #removeClicker() {
+        const clickHandler = () => {
+            let items = document.querySelectorAll(".uploader-imgs__item-container");
+
+            items.forEach(item => {
+                item.classList.toggle("cursor");
+             });
+
+            if(this.#removeBtn.getAttribute("status") === "inactive") {
+                items.forEach(item => {
+                    item.addEventListener("click", removeAnimation);
+                 });
+
+                this.#removeBtn.textContent = "Готово";
+                this.#removeBtn.setAttribute("status", "active");
+            } else {
+                items.forEach(item => {
+                    item.removeEventListener("click", removeAnimation);
+
+                    if (item.classList.contains("selected")) {
+                        item.remove();
+                    }
+                });
+    
+                this.#removeBtn.textContent = "Удалить";
+                this.#removeBtn.setAttribute("status", "inactive");
+            }
+        }
+
+        this.#removeBtn.addEventListener("click", clickHandler);
+
+        function removeAnimation()  {
+            this.classList.toggle("selected");
+        }
     }
 }

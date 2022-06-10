@@ -29,7 +29,8 @@ body {
         flex-wrap: wrap;
 
         &__item {
-            width: 245px;
+            width: 100%;
+            height: auto;
             background-color: $white;
         }
 
@@ -46,17 +47,43 @@ body {
         }
 
         &__item-container {
-            width: 240px;
+            width: 249px;
             height: 160px;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-right: 20px;
             margin-bottom: 20px;
             box-shadow: $shadow;
             border-radius: 10px;
             border: 2px solid $green;
+            transition: all .3s;
+
+            &:not(:nth-child(3n)) {
+                margin-right: 20px;
+            }
+        }
+
+        .cursor {
+            cursor: pointer;
+        }
+
+        .selected {
+            animation: .8s ease-in-out 0s normal none infinite running trambling-animation;
+            opacity: 0.2;
+            border-color: $red;
+        }
+
+        @keyframes trambling-animation {
+            0%, 50%, 100% {
+                transform: rotate(0deg);
+            }
+            10%, 30% {
+                transform: rotate(-3deg);
+            }
+            20%, 40% {
+                transform: rotate(3deg);
+            }
         }
     }
 
@@ -64,7 +91,13 @@ body {
         display: block;
         padding: 8px 15px;
         border-radius: 20px;
-        transition: all .3s; 
+        transition: all .3s;
+        cursor: pointer;
+
+        &__group {
+            display: flex;
+            justify-content: space-between;
+        }
 
         &__open {
             border: 2px solid $green;
@@ -76,6 +109,12 @@ body {
             border: 2px solid $white;
             background-color: $green;
             color: $white;
+        }
+
+        &__remove {
+            border: 2px solid $red;
+            background-color: $white;
+            color: $red;
         }
 
         &:hover {
