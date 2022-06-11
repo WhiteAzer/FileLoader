@@ -157,6 +157,8 @@ var _input = /*#__PURE__*/new WeakMap();
 
 var _configs = /*#__PURE__*/new WeakMap();
 
+var _fileList = /*#__PURE__*/new WeakMap();
+
 var _inputConfig = /*#__PURE__*/new WeakSet();
 
 var _inputClicker = /*#__PURE__*/new WeakSet();
@@ -199,6 +201,11 @@ var Uploader = /*#__PURE__*/function () {
       value: void 0
     });
 
+    _classPrivateFieldInitSpec(this, _fileList, {
+      writable: true,
+      value: void 0
+    });
+
     _classPrivateFieldSet(this, _input, document.querySelector(selector));
 
     _classPrivateFieldSet(this, _configs, configs);
@@ -232,23 +239,25 @@ var Uploader = /*#__PURE__*/function () {
       document.querySelector(".uploader-title").after(imgsGroup);
 
       var changeHandler = function changeHandler(e) {
-        var files = Array.from(e.target.files);
-        files.forEach(function (file) {
+        _classPrivateFieldSet(_this, _fileList, Array.from(e.target.files));
+
+        _classPrivateFieldGet(_this, _fileList).forEach(function (file) {
           var reader = new FileReader();
 
           reader.onload = function (e) {
+            var text = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
             var isSafari = isSafari = navigator.userAgent.includes('Safari') ? true : false;
 
             if (file.type.includes("image") || isSafari && file.type.includes("pdf")) {
-              imgsGroup.insertAdjacentHTML('afterbegin', "\n                            <div class=\"uploader-imgs__item-container\">\n                                <img src=\"".concat(e.target.result, "\" alt=\"").concat(file.name, "\" class=\"uploader-imgs__item\" />\n                            </div>\n                        "));
+              imgsGroup.insertAdjacentHTML('afterbegin', "\n                            <div class=\"uploader-imgs__item-container\" data-file-name=\"".concat(file.name, "\">\n                                <img src=\"").concat(e.target.result, "\" alt=\"").concat(file.name, "\" class=\"uploader-imgs__item\" />\n                                <div class=\"uploader-imgs__item-info\">\n                                    <span>").concat(text, "</span>\n                                    <span>").concat(bytesToSize(file.size), "</span>\n                                </div>\n                            </div>\n                        "));
             } else {
-              var text = file.name.length < 15 ? file.name : file.name.slice(0, 14) + "...";
-              imgsGroup.insertAdjacentHTML('afterbegin', "\n                            <div class=\"uploader-imgs__item-container\">\n                                <div class=\"uploader-imgs__item uploader-imgs__file\">\n                                    <p class=\"uploader-imgs__item-text\">".concat(text, "</p>\n                                </div>\n                            </div>\n                        "));
+              imgsGroup.insertAdjacentHTML('afterbegin', "\n                            <div class=\"uploader-imgs__item-container\" data-file-name=\"".concat(file.name, "\">\n                                <div class=\"uploader-imgs__item uploader-imgs__file\">\n                                    <span class=\"uploader-imgs__item-text\">").concat(text, "</span>\n                                </div>\n                                <div class=\"uploader-imgs__item-info\">\n                                    <span>").concat(bytesToSize(file.size), "</span>\n                                </div>\n                            </div>\n                        "));
             }
           };
 
           reader.readAsDataURL(file);
         });
+
         if (!_classPrivateFieldGet(_this, _removeBtn)) _classPrivateMethodGet(_this, _removeBtnCreater, _removeBtnCreater2).call(_this);
       };
 
@@ -289,8 +298,7 @@ function _removeBtnCreater2() {
   _classPrivateFieldGet(this, _removeBtn).classList.add("uploader-btn__remove", "uploader-btn");
 
   _classPrivateFieldGet(this, _removeBtn).textContent = "Удалить";
-
-  _classPrivateFieldGet(this, _removeBtn).setAttribute("status", "inactive");
+  _classPrivateFieldGet(this, _removeBtn).dataset.status = "inactive";
 
   _classPrivateFieldGet(this, _openBtn).after(_classPrivateFieldGet(this, _removeBtn));
 
@@ -300,38 +308,62 @@ function _removeBtnCreater2() {
 function _removeClicker2() {
   var _this3 = this;
 
-  var clickHandler = function clickHandler() {
+  var removeHandler = function removeHandler() {
     var items = document.querySelectorAll(".uploader-imgs__item-container");
     items.forEach(function (item) {
       item.classList.toggle("cursor");
     });
 
-    if (_classPrivateFieldGet(_this3, _removeBtn).getAttribute("status") === "inactive") {
+    if (_classPrivateFieldGet(_this3, _removeBtn).dataset.status === "inactive") {
       items.forEach(function (item) {
         item.addEventListener("click", removeAnimation);
       });
       _classPrivateFieldGet(_this3, _removeBtn).textContent = "Готово";
-
-      _classPrivateFieldGet(_this3, _removeBtn).setAttribute("status", "active");
+      document.querySelector(".uploader-title").textContent = "Выберите файлы";
+      _classPrivateFieldGet(_this3, _removeBtn).dataset.status = "active";
     } else {
       items.forEach(function (item) {
         item.removeEventListener("click", removeAnimation);
 
         if (item.classList.contains("selected")) {
-          item.remove();
+          _classPrivateFieldSet(_this3, _fileList, _classPrivateFieldGet(_this3, _fileList).filter(function (file) {
+            return file.name !== item.dataset.fileName;
+          }));
+
+          item.classList.remove("selected");
+          item.classList.add("removing");
+          setTimeout(function () {
+            return item.remove();
+          }, 500);
         }
       });
-      _classPrivateFieldGet(_this3, _removeBtn).textContent = "Удалить";
 
-      _classPrivateFieldGet(_this3, _removeBtn).setAttribute("status", "inactive");
+      if (!_classPrivateFieldGet(_this3, _fileList).length) {
+        _classPrivateFieldGet(_this3, _removeBtn).remove();
+
+        _classPrivateFieldSet(_this3, _removeBtn, null);
+
+        return;
+      }
+
+      _classPrivateFieldGet(_this3, _removeBtn).textContent = "Удалить";
+      document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
+      _classPrivateFieldGet(_this3, _removeBtn).dataset.status = "inactive";
     }
   };
 
-  _classPrivateFieldGet(this, _removeBtn).addEventListener("click", clickHandler);
+  _classPrivateFieldGet(this, _removeBtn).addEventListener("click", removeHandler);
 
   function removeAnimation() {
     this.classList.toggle("selected");
   }
+}
+
+function bytesToSize(bytes) {
+  var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  if (!bytes) return '0 Byte';
+  var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+  return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
 }
 },{}],"js/app.js":[function(require,module,exports) {
 "use strict";
@@ -374,7 +406,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49226" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49153" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -376,6 +376,19 @@ body {
   height: auto;
   background-color: #edf6f9;
 }
+.uploader-imgs__item-info {
+  opacity: 0;
+  position: absolute;
+  top: -30px;
+  background-color: #edf6f9;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
 .uploader-imgs__file {
   background-color: #edf6f9;
   display: flex;
@@ -399,12 +412,21 @@ body {
   border-radius: 10px;
   border: 2px solid #006d77;
   transition: all 0.3s;
+  position: relative;
 }
 .uploader-imgs__item-container:not(:nth-child(3n)) {
   margin-right: 20px;
 }
+.uploader-imgs__item-container:hover .uploader-imgs__item-info {
+  top: 0;
+  opacity: 1;
+}
 .uploader-imgs .cursor {
   cursor: pointer;
+}
+.uploader-imgs .removing {
+  opacity: 0;
+  transition: opacity 0.5s;
 }
 .uploader-imgs .selected {
   animation: 0.8s ease-in-out 0s normal none infinite running trambling-animation;
