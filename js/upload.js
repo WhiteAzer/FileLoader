@@ -3,7 +3,7 @@ export default class Uploader {
     #removeBtn;
     #input;
     #configs;
-    #fileList
+    #fileList = [];
 
     constructor(selector, configs = {}) {
         this.#input = document.querySelector(selector);
@@ -33,9 +33,11 @@ export default class Uploader {
         document.querySelector(".uploader-title").after(imgsGroup);
 
         const changeHandler = e => {
-            this.#fileList = Array.from(e.target.files);
+            let oldFilesCount = this.#fileList.length;
+            this.#fileList = this.#fileList.concat(Array.from(e.target.files));
+            console.log(this.#fileList)
 
-            this.#fileList.forEach(file => {
+            this.#fileList.slice(oldFilesCount).forEach(file => {
                 let reader = new FileReader();
 
                 reader.onload = e => {
@@ -125,15 +127,29 @@ export default class Uploader {
                     item.removeEventListener("click", removeAnimation);
 
                     if (item.classList.contains("selected")) {
-                        this.#fileList =  this.#fileList.filter(file =>
-                            file.name !== item.dataset.fileName
-                        );
+
+                        let isFounded = false;
+                        this.#fileList =  this.#fileList.filter(function (file) {
+                                if (file.name === item.dataset.fileName && isFounded === false) {
+                                    isFounded = true;
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                        });
                         
                         item.classList.remove("selected");
                         item.classList.add("removing");
-                        setTimeout(() => item.remove(), 500);
+                        setTimeout(() => {
+                            item.remove();
+                        }, 500);
+                        setTimeout(() => {
+                            console.log(this.#fileList)
+                        }, 600);
                     }
                 });
+
+                document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
 
                 if (!this.#fileList.length) {
                     this.#removeBtn.remove();
@@ -142,7 +158,6 @@ export default class Uploader {
                 }
     
                 this.#removeBtn.textContent = "Удалить";
-                document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
                 this.#removeBtn.dataset.status = "inactive";
             }
         }

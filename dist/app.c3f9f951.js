@@ -203,7 +203,7 @@ var Uploader = /*#__PURE__*/function () {
 
     _classPrivateFieldInitSpec(this, _fileList, {
       writable: true,
-      value: void 0
+      value: []
     });
 
     _classPrivateFieldSet(this, _input, document.querySelector(selector));
@@ -239,9 +239,13 @@ var Uploader = /*#__PURE__*/function () {
       document.querySelector(".uploader-title").after(imgsGroup);
 
       var changeHandler = function changeHandler(e) {
-        _classPrivateFieldSet(_this, _fileList, Array.from(e.target.files));
+        var oldFilesCount = _classPrivateFieldGet(_this, _fileList).length;
 
-        _classPrivateFieldGet(_this, _fileList).forEach(function (file) {
+        _classPrivateFieldSet(_this, _fileList, _classPrivateFieldGet(_this, _fileList).concat(Array.from(e.target.files)));
+
+        console.log(_classPrivateFieldGet(_this, _fileList));
+
+        _classPrivateFieldGet(_this, _fileList).slice(oldFilesCount).forEach(function (file) {
           var reader = new FileReader();
 
           reader.onload = function (e) {
@@ -326,17 +330,28 @@ function _removeClicker2() {
         item.removeEventListener("click", removeAnimation);
 
         if (item.classList.contains("selected")) {
+          var isFounded = false;
+
           _classPrivateFieldSet(_this3, _fileList, _classPrivateFieldGet(_this3, _fileList).filter(function (file) {
-            return file.name !== item.dataset.fileName;
+            if (file.name === item.dataset.fileName && isFounded === false) {
+              isFounded = true;
+              return false;
+            } else {
+              return true;
+            }
           }));
 
           item.classList.remove("selected");
           item.classList.add("removing");
           setTimeout(function () {
-            return item.remove();
+            item.remove();
           }, 500);
+          setTimeout(function () {
+            console.log(_classPrivateFieldGet(_this3, _fileList));
+          }, 600);
         }
       });
+      document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
 
       if (!_classPrivateFieldGet(_this3, _fileList).length) {
         _classPrivateFieldGet(_this3, _removeBtn).remove();
@@ -347,7 +362,6 @@ function _removeClicker2() {
       }
 
       _classPrivateFieldGet(_this3, _removeBtn).textContent = "Удалить";
-      document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
       _classPrivateFieldGet(_this3, _removeBtn).dataset.status = "inactive";
     }
   };
@@ -406,7 +420,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49153" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49172" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
