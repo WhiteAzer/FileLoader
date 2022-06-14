@@ -286,7 +286,7 @@ var Uploader = /*#__PURE__*/function () {
           _classPrivateFieldSet(_this, _fileList, []);
 
           document.querySelector(".uploader-imgs").innerHTML = "";
-          document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
+          document.querySelector(".uploader-links").remove();
         }
 
         var oldFilesCount = _classPrivateFieldGet(_this, _fileList).length;
@@ -465,8 +465,6 @@ function _uploadClicker2() {
     });
 
     var links = _classPrivateFieldGet(_this4, _onUpload).call(_this4, _classPrivateFieldGet(_this4, _fileList), info);
-
-    document.querySelector(".uploader-title").textContent = "Ссылки на файлы в консоли";
   };
 
   _classPrivateFieldGet(this, _uploadBtn).addEventListener("click", uploadHandler);
@@ -9137,7 +9135,9 @@ var uploader = new _upload.default("#input", {
   multiple: true,
   accept: [".jpg", ".docx", ".png", ".pdf"],
   onUpload: function onUpload(files, blocks) {
-    var URLSArray = [];
+    var links = document.createElement("ul");
+    links.classList.add("uploader-links");
+    document.querySelector(".uploader-imgs").after(links);
     files.forEach(function (file, i) {
       var storageRef = (0, _storage.ref)(storage, "files/".concat(file.name));
       var uploadTask = (0, _storage.uploadBytesResumable)(storageRef, file);
@@ -9150,8 +9150,9 @@ var uploader = new _upload.default("#input", {
         alert(er);
       }, function () {
         (0, _storage.getDownloadURL)(uploadTask.snapshot.ref).then(function (downloadURL) {
+          var fileName = blocks[i].closest(".uploader-imgs__item-container").dataset.fileName;
+          links.insertAdjacentHTML('beforeend', "\n                        <li class=\"uploader-links__item\">\n                            <a href=\"".concat(downloadURL, "\" target=\"_blank\" class=\"uploader-links__item-link\">\n                                ").concat(fileName, "\n                            </a>\n                        </li>\n                        "));
           console.log('URL: ', downloadURL);
-          URLSArray.push(downloadURL);
         });
       });
     });
@@ -9187,7 +9188,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50865" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52362" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

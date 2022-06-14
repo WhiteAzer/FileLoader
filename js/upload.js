@@ -46,7 +46,8 @@ export default class Uploader {
             if(document.querySelector(".uploader-imgs__item-info__uploaded-progress")) {
                 this.#fileList = [];
                 document.querySelector(".uploader-imgs").innerHTML = "";
-                document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
+                
+                document.querySelector(".uploader-links").remove();
             }
 
             let oldFilesCount = this.#fileList.length;
@@ -217,7 +218,6 @@ export default class Uploader {
             })
 
             const links = this.#onUpload(this.#fileList, info);
-            document.querySelector(".uploader-title").textContent = "Ссылки на файлы в консоли";
         }
 
         this.#uploadBtn.addEventListener("click", uploadHandler);

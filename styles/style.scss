@@ -182,4 +182,32 @@ body {
         }
     }
 
+    &-links {
+        list-style: none;
+        margin-bottom: 35px;
+
+        &::before,  &::after{
+            display: block;
+            content: "";
+            border: 1px solid opacify($green, 0.5);
+            margin: 10px;
+        }
+
+        &__item {
+            padding: 8px;
+
+            &-link {
+                text-decoration: none;
+                color: #000000;
+                font-size: 20px;
+                transition: all .3s;
+
+                &:hover {
+                    color: $green;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
 }

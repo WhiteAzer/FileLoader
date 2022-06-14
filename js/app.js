@@ -34,7 +34,11 @@ const uploader = new Uploader("#input", {
     multiple: true,
     accept: [".jpg", ".docx", ".png", ".pdf"],
     onUpload(files, blocks) {
-        let URLSArray = [];
+        let links = document.createElement("ul");
+        links.classList.add("uploader-links")
+
+        document.querySelector(".uploader-imgs").after(links);
+
         files.forEach((file, i) => {
             const storageRef = ref(storage, `files/${file.name}`);
 
@@ -51,8 +55,16 @@ const uploader = new Uploader("#input", {
                 },
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        const fileName = blocks[i].closest(".uploader-imgs__item-container").dataset.fileName;
+
+                        links.insertAdjacentHTML('beforeend', `
+                        <li class="uploader-links__item">
+                            <a href="${downloadURL}" target="_blank" class="uploader-links__item-link">
+                                ${fileName}
+                            </a>
+                        </li>
+                        `)
                         console.log('URL: ', downloadURL);
-                        URLSArray.push(downloadURL);
                     });
                 });
         })
