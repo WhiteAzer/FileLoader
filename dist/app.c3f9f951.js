@@ -9152,7 +9152,6 @@ var uploader = new _upload.default("#input", {
         (0, _storage.getDownloadURL)(uploadTask.snapshot.ref).then(function (downloadURL) {
           var fileName = blocks[i].closest(".uploader-imgs__item-container").dataset.fileName;
           links.insertAdjacentHTML('beforeend', "\n                        <li class=\"uploader-links__item\">\n                            <a href=\"".concat(downloadURL, "\" target=\"_blank\" class=\"uploader-links__item-link\">\n                                ").concat(fileName, "\n                            </a>\n                        </li>\n                        "));
-          console.log('URL: ', downloadURL);
         });
       });
     });
@@ -9188,7 +9187,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52362" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53062" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

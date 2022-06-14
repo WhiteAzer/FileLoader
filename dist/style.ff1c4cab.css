@@ -499,12 +499,6 @@ body {
   list-style: none;
   margin-bottom: 35px;
 }
-.uploader-links::before, .uploader-links::after {
-  display: block;
-  content: "";
-  border: 1px solid #006d77;
-  margin: 10px;
-}
 .uploader-links__item {
   padding: 8px;
 }

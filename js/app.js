@@ -64,7 +64,6 @@ const uploader = new Uploader("#input", {
                             </a>
                         </li>
                         `)
-                        console.log('URL: ', downloadURL);
                     });
                 });
         })
