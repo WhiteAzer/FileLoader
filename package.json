@@ -15,6 +15,7 @@
     "sass": "^1.52.2"
   },
   "dependencies": {
+    "firebase": "^9.8.3",
     "imgs": "^0.0.1",
     "upload.js": "^0.0.11"
   }

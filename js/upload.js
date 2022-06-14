@@ -1,20 +1,30 @@
 export default class Uploader {
     #openBtn;
     #removeBtn;
+    #uploadBtn;
     #input;
     #configs;
     #fileList = [];
+    #onUpload;
 
     constructor(selector, configs = {}) {
         this.#input = document.querySelector(selector);
         this.#configs = configs;
+        this.#onUpload = configs.onUpload ?? noop;
+
+        function noop() {};
     }
 
-    BtnCreater(selector) {
-        this.#openBtn = document.createElement("button");
+    #elementCreator(selector, classList, inner) {
+        let elem = document.createElement(selector);
+        if (classList) elem.classList.add(...classList);
+        if (inner) elem.textContent = inner;
 
-        this.#openBtn.classList.add("uploader-btn__open", "uploader-btn");
-        this.#openBtn.textContent = "Открыть";
+        return elem;
+    }
+
+    openBtnCreater(selector) {
+        this.#openBtn = this.#elementCreator("button", ["uploader-btn__open", "uploader-btn"], "Открыть");
 
         this.#input.style.display = "none";
         this.#input.insertAdjacentHTML("afterend", `
@@ -28,14 +38,19 @@ export default class Uploader {
     }
 
     PreviewPrinter() {
-        const imgsGroup = document.createElement("div");
-        imgsGroup.classList.add("uploader-imgs");
+
+        const imgsGroup = this.#elementCreator("div", ["uploader-imgs"])
         document.querySelector(".uploader-title").after(imgsGroup);
 
         const changeHandler = e => {
+            if(document.querySelector(".uploader-imgs__item-info__uploaded-progress")) {
+                this.#fileList = [];
+                document.querySelector(".uploader-imgs").innerHTML = "";
+                document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
+            }
+
             let oldFilesCount = this.#fileList.length;
             this.#fileList = this.#fileList.concat(Array.from(e.target.files));
-            console.log(this.#fileList)
 
             this.#fileList.slice(oldFilesCount).forEach(file => {
                 let reader = new FileReader();
@@ -46,7 +61,7 @@ export default class Uploader {
                     let isSafari =  isSafari =  navigator.userAgent.includes('Safari') ? true : false;
 
                     if (file.type.includes("image") || (isSafari && file.type.includes("pdf"))) {
-                        imgsGroup.insertAdjacentHTML('afterbegin', `
+                        imgsGroup.insertAdjacentHTML('beforeend', `
                             <div class="uploader-imgs__item-container" data-file-name="${file.name}">
                                 <img src="${e.target.result}" alt="${file.name}" class="uploader-imgs__item" />
                                 <div class="uploader-imgs__item-info">
@@ -56,7 +71,7 @@ export default class Uploader {
                             </div>
                         `);
                     } else {
-                        imgsGroup.insertAdjacentHTML('afterbegin', `
+                        imgsGroup.insertAdjacentHTML('beforeend', `
                             <div class="uploader-imgs__item-container" data-file-name="${file.name}">
                                 <div class="uploader-imgs__item uploader-imgs__file">
                                     <span class="uploader-imgs__item-text">${text}</span>
@@ -71,10 +86,18 @@ export default class Uploader {
 
                 reader.readAsDataURL(file);
             });
+            if (!this.#uploadBtn) this.#uploadBtnCreator();
             if (!this.#removeBtn) this.#removeBtnCreater();
         }
 
-        this.#input.addEventListener("change", changeHandler)
+        this.#input.addEventListener("change", changeHandler);
+
+        function bytesToSize(bytes) {
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            if (!bytes) return '0 Byte';
+            const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+            return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
+         }
     }
 
     #inputConfig() {
@@ -94,14 +117,19 @@ export default class Uploader {
 
         this.#openBtn.addEventListener("click", clickHandler);
     }
+
+    #uploadBtnCreator() {
+        this.#uploadBtn = this.#elementCreator("button", ["uploader-btn__upload", "uploader-btn"], "Загрузить")
+        this.#openBtn.after(this.#uploadBtn);
+
+        this.#uploadClicker();
+    }
     
     #removeBtnCreater() {
-        this.#removeBtn = document.createElement("button");
-        this.#removeBtn.classList.add("uploader-btn__remove", "uploader-btn");
-        this.#removeBtn.textContent = "Удалить";
+        this.#removeBtn = this.#elementCreator("button", ["uploader-btn__remove", "uploader-btn"], "Удалить")
         this.#removeBtn.dataset.status = "inactive";
 
-        this.#openBtn.after(this.#removeBtn)
+        this.#uploadBtn.after(this.#removeBtn);
 
         this.#removeClicker();
     }
@@ -143,9 +171,6 @@ export default class Uploader {
                         setTimeout(() => {
                             item.remove();
                         }, 500);
-                        setTimeout(() => {
-                            console.log(this.#fileList)
-                        }, 600);
                     }
                 });
 
@@ -154,6 +179,9 @@ export default class Uploader {
                 if (!this.#fileList.length) {
                     this.#removeBtn.remove();
                     this.#removeBtn = null;
+
+                    this.#uploadBtn.remove();
+                    this.#uploadBtn = null;
                     return;
                 }
     
@@ -168,11 +196,30 @@ export default class Uploader {
             this.classList.toggle("selected");
         }
     }
-}
 
-function bytesToSize(bytes) {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (!bytes) return '0 Byte';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
- }
+    #uploadClicker() {
+        const uploadHandler = () => {
+            this.#removeBtn.remove();
+            this.#removeBtn = null;
+
+            this.#uploadBtn.remove();
+            this.#uploadBtn = null;
+
+            const info = document.querySelectorAll(".uploader-imgs__item-info");
+            info.forEach(item => {
+                item.innerHTML = "";
+                item.classList.remove("uploader-imgs__item-info");
+                item.classList.add("uploader-imgs__item-info__uploaded");
+                item.innerHTML = `
+                <div class="uploader-imgs__item-info__uploaded-progress">
+                </div>
+                `
+            })
+
+            const links = this.#onUpload(this.#fileList, info);
+            document.querySelector(".uploader-title").textContent = "Ссылки на файлы в консоли";
+        }
+
+        this.#uploadBtn.addEventListener("click", uploadHandler);
+    }
+}

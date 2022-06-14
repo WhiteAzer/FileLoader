@@ -2,5 +2,5 @@
 
 ## Current tasks:
 - [x] To make up the visual part of the application;
-- [ ] Add the ability to apload files;
-- [ ] Add a file link generator;
+- [x] Add the ability to apload files;
+- [x] Add a file link generator;

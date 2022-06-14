@@ -389,6 +389,23 @@ body {
   box-sizing: border-box;
   transition: all 0.3s;
 }
+.uploader-imgs__item-info__uploaded {
+  position: absolute;
+  top: 0px;
+  background-color: #edf6f9;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.uploader-imgs__item-info__uploaded-progress {
+  height: 100%;
+  background-color: #83c5be;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .uploader-imgs__file {
   background-color: #edf6f9;
   display: flex;
@@ -464,6 +481,8 @@ body {
   border: 2px solid #edf6f9;
   background-color: #006d77;
   color: #edf6f9;
+  margin-right: auto;
+  margin-left: 60px;
 }
 .uploader-btn__remove {
   border: 2px solid #ae2525;
