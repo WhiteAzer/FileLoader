@@ -33,6 +33,15 @@ body {
             height: auto;
             background-color: $white;
 
+            &-link{
+
+                text-decoration: none;
+                color: inherit;
+                border:0;
+                outline: none;
+                user-select: none;
+            }
+
             &-info {
                 opacity: 0;
                 position: absolute;
@@ -72,8 +81,8 @@ body {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 100%;
+            width: 249px;
+            height: 160px;
             box-sizing: border-box;
             font-size: 20px;
             color: $green;
@@ -181,33 +190,4 @@ body {
             box-shadow: inset $shadow;
         }
     }
-
-    &-links {
-        list-style: none;
-        margin-bottom: 35px;
-
-        // &::before,  &::after{
-        //     display: block;
-        //     content: "";
-        //     border: 1px solid opacify($green, 0.5);
-        //     margin: 10px;
-        // }
-
-        &__item {
-            padding: 8px;
-
-            &-link {
-                text-decoration: none;
-                color: #000000;
-                font-size: 20px;
-                transition: all .3s;
-
-                &:hover {
-                    color: $green;
-                    text-decoration: underline;
-                }
-            }
-        }
-    }
-
 }

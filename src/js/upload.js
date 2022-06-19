@@ -38,7 +38,6 @@ export default class Uploader {
     }
 
     PreviewPrinter() {
-
         const imgsGroup = this.#elementCreator("div", ["uploader-imgs"])
         document.querySelector(".uploader-title").after(imgsGroup);
 
@@ -46,8 +45,7 @@ export default class Uploader {
             if(document.querySelector(".uploader-imgs__item-info__uploaded-progress")) {
                 this.#fileList = [];
                 document.querySelector(".uploader-imgs").innerHTML = "";
-                
-                document.querySelector(".uploader-links").remove();
+                document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
             }
 
             let oldFilesCount = this.#fileList.length;
@@ -217,7 +215,8 @@ export default class Uploader {
                 `
             })
 
-            const links = this.#onUpload(this.#fileList, info);
+            this.#onUpload(this.#fileList, Array.from(info));
+            document.querySelector(".uploader-title").textContent = "Нажмите на ваши файлы";
         }
 
         this.#uploadBtn.addEventListener("click", uploadHandler);

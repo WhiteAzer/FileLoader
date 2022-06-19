@@ -117,7 +117,79 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"js/upload.js":[function(require,module,exports) {
+})({"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
+
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)?\/[^/]+(?:\?.*)?$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"styles/style.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"js/upload.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -286,7 +358,7 @@ var Uploader = /*#__PURE__*/function () {
           _classPrivateFieldSet(_this, _fileList, []);
 
           document.querySelector(".uploader-imgs").innerHTML = "";
-          document.querySelector(".uploader-links").remove();
+          document.querySelector(".uploader-title").textContent = "Загрузите ваши файлы";
         }
 
         var oldFilesCount = _classPrivateFieldGet(_this, _fileList).length;
@@ -464,12 +536,14 @@ function _uploadClicker2() {
       item.innerHTML = "\n                <div class=\"uploader-imgs__item-info__uploaded-progress\">\n                </div>\n                ";
     });
 
-    var links = _classPrivateFieldGet(_this4, _onUpload).call(_this4, _classPrivateFieldGet(_this4, _fileList), info);
+    _classPrivateFieldGet(_this4, _onUpload).call(_this4, _classPrivateFieldGet(_this4, _fileList), Array.from(info));
+
+    document.querySelector(".uploader-title").textContent = "Нажмите на ваши файлы";
   };
 
   _classPrivateFieldGet(this, _uploadBtn).addEventListener("click", uploadHandler);
 }
-},{}],"node_modules/@firebase/util/dist/index.esm2017.js":[function(require,module,exports) {
+},{}],"../node_modules/@firebase/util/dist/index.esm2017.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
@@ -2653,7 +2727,7 @@ function getModularInstance(service) {
     return service;
   }
 }
-},{}],"node_modules/@firebase/component/dist/esm/index.esm2017.js":[function(require,module,exports) {
+},{}],"../node_modules/@firebase/component/dist/esm/index.esm2017.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3130,7 +3204,7 @@ class ComponentContainer {
 }
 
 exports.ComponentContainer = ComponentContainer;
-},{"@firebase/util":"node_modules/@firebase/util/dist/index.esm2017.js"}],"node_modules/@firebase/logger/dist/esm/index.esm2017.js":[function(require,module,exports) {
+},{"@firebase/util":"../node_modules/@firebase/util/dist/index.esm2017.js"}],"../node_modules/@firebase/logger/dist/esm/index.esm2017.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3388,7 +3462,7 @@ function setUserLogHandler(logCallback, options) {
     }
   }
 }
-},{}],"node_modules/idb/build/wrap-idb-value.js":[function(require,module,exports) {
+},{}],"../node_modules/idb/build/wrap-idb-value.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3586,7 +3660,7 @@ function wrap(value) {
 const unwrap = value => reverseTransformCache.get(value);
 
 exports.u = unwrap;
-},{}],"node_modules/idb/build/index.js":[function(require,module,exports) {
+},{}],"../node_modules/idb/build/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3693,7 +3767,7 @@ function getMethod(target, prop) {
   get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
   has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
 }));
-},{"./wrap-idb-value.js":"node_modules/idb/build/wrap-idb-value.js"}],"node_modules/@firebase/app/dist/esm/index.esm2017.js":[function(require,module,exports) {
+},{"./wrap-idb-value.js":"../node_modules/idb/build/wrap-idb-value.js"}],"../node_modules/@firebase/app/dist/esm/index.esm2017.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4781,7 +4855,7 @@ function registerCoreComponents(variant) {
 
 
 registerCoreComponents('');
-},{"@firebase/component":"node_modules/@firebase/component/dist/esm/index.esm2017.js","@firebase/logger":"node_modules/@firebase/logger/dist/esm/index.esm2017.js","@firebase/util":"node_modules/@firebase/util/dist/index.esm2017.js","idb":"node_modules/idb/build/index.js"}],"node_modules/firebase/app/dist/index.esm.js":[function(require,module,exports) {
+},{"@firebase/component":"../node_modules/@firebase/component/dist/esm/index.esm2017.js","@firebase/logger":"../node_modules/@firebase/logger/dist/esm/index.esm2017.js","@firebase/util":"../node_modules/@firebase/util/dist/index.esm2017.js","idb":"../node_modules/idb/build/index.js"}],"../node_modules/firebase/app/dist/index.esm.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4820,7 +4894,7 @@ var version = "9.8.3";
  */
 
 (0, _app.registerVersion)(name, version, 'app');
-},{"@firebase/app":"node_modules/@firebase/app/dist/esm/index.esm2017.js"}],"node_modules/@firebase/storage/dist/index.esm2017.js":[function(require,module,exports) {
+},{"@firebase/app":"../node_modules/@firebase/app/dist/esm/index.esm2017.js"}],"../node_modules/@firebase/storage/dist/index.esm2017.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9091,7 +9165,7 @@ function registerStorage() {
 }
 
 registerStorage();
-},{"@firebase/app":"node_modules/@firebase/app/dist/esm/index.esm2017.js","@firebase/util":"node_modules/@firebase/util/dist/index.esm2017.js","@firebase/component":"node_modules/@firebase/component/dist/esm/index.esm2017.js"}],"node_modules/firebase/storage/dist/index.esm.js":[function(require,module,exports) {
+},{"@firebase/app":"../node_modules/@firebase/app/dist/esm/index.esm2017.js","@firebase/util":"../node_modules/@firebase/util/dist/index.esm2017.js","@firebase/component":"../node_modules/@firebase/component/dist/esm/index.esm2017.js"}],"../node_modules/firebase/storage/dist/index.esm.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9110,10 +9184,12 @@ Object.keys(_storage).forEach(function (key) {
     }
   });
 });
-},{"@firebase/storage":"node_modules/@firebase/storage/dist/index.esm2017.js"}],"js/app.js":[function(require,module,exports) {
+},{"@firebase/storage":"../node_modules/@firebase/storage/dist/index.esm2017.js"}],"js/app.js":[function(require,module,exports) {
 "use strict";
 
-var _upload = _interopRequireDefault(require("../js/upload.js"));
+require("../styles/style.scss");
+
+var _upload = _interopRequireDefault(require("./upload.js"));
 
 var _app = require("firebase/app");
 
@@ -9135,9 +9211,6 @@ var uploader = new _upload.default("#input", {
   multiple: true,
   accept: [".jpg", ".docx", ".png", ".pdf"],
   onUpload: function onUpload(files, blocks) {
-    var links = document.createElement("ul");
-    links.classList.add("uploader-links");
-    document.querySelector(".uploader-imgs").after(links);
     files.forEach(function (file, i) {
       var storageRef = (0, _storage.ref)(storage, "files/".concat(file.name));
       var uploadTask = (0, _storage.uploadBytesResumable)(storageRef, file);
@@ -9150,16 +9223,35 @@ var uploader = new _upload.default("#input", {
         alert(er);
       }, function () {
         (0, _storage.getDownloadURL)(uploadTask.snapshot.ref).then(function (downloadURL) {
-          var fileName = blocks[i].closest(".uploader-imgs__item-container").dataset.fileName;
-          links.insertAdjacentHTML('beforeend', "\n                        <li class=\"uploader-links__item\">\n                            <a href=\"".concat(downloadURL, "\" target=\"_blank\" class=\"uploader-links__item-link\">\n                                ").concat(fileName, "\n                            </a>\n                        </li>\n                        "));
+          files.forEach(function (file) {
+            if (decodeURI(downloadURL).includes(file.name)) {
+              var items = blocks.filter(function (item) {
+                return item.closest(".uploader-imgs__item-container").dataset.fileName === file.name;
+              });
+              items.forEach(function (item) {
+                linkCreator(downloadURL, item);
+              });
+            }
+          });
         });
       });
     });
   }
 });
+
+function linkCreator(URL, elem) {
+  var img = elem.previousElementSibling;
+  var link = document.createElement("a");
+  link.classList.add("uploader-imgs__item-link");
+  link.href = URL;
+  link.target = "_blank";
+  link.innerHTML = img.outerHTML;
+  img.replaceWith(link);
+}
+
 uploader.openBtnCreater();
 uploader.PreviewPrinter();
-},{"../js/upload.js":"js/upload.js","firebase/app":"node_modules/firebase/app/dist/index.esm.js","firebase/storage":"node_modules/firebase/storage/dist/index.esm.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../styles/style.scss":"styles/style.scss","./upload.js":"js/upload.js","firebase/app":"../node_modules/firebase/app/dist/index.esm.js","firebase/storage":"../node_modules/firebase/storage/dist/index.esm.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -9187,7 +9279,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53062" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49223" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -9363,5 +9455,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","js/app.js"], null)
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","js/app.js"], null)
 //# sourceMappingURL=/app.c3f9f951.js.map
