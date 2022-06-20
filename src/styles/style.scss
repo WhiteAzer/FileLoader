@@ -9,11 +9,13 @@ body {
 }
 
 .uploader {
+    width: 100%;
     border-radius: 20px;
     background: rgba(255, 255, 255, .4);
     backdrop-filter: blur(8px);
     box-shadow: $shadow;
     padding: 40px 50px;
+    margin: 0 10px;
 
     &-title {
         font-size: 38px;
@@ -160,6 +162,7 @@ body {
         &__group {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
         }
 
         &__open {
@@ -191,3 +194,5 @@ body {
         }
     }
 }
+
+@import "media";

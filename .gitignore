@@ -1,5 +1,6 @@
-.cache
-node_modules
-package.json
-package-lock.json
-dist
+.cache/
+*.json
+node_modules/
+dist/
+.DS_Store
+.idea/
